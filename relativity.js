@@ -36,36 +36,37 @@ function setup_converters()
                 active_field(fields[j], 'in' + j);
             else
                 passive_field(fields[j]);
-            add_recalc_handler(fields[j], 'input[type=text]', 'text');
-            add_recalc_handler(fields[j], 'input[type=checkbox]', 'cb');
+            add_recalc_handler(fields[j], 'input[type=text]', 'change');
+            add_recalc_handler(fields[j], 'span.mark', 'activate');
         }
     }
 }
 
 function add_recalc_handler(parent, child_sel, kind)
 {
-    parent.querySelector(child_sel).onchange = function ()
-    {
-        recalc(parent, kind);
-    }
+    if (kind == 'change')
+        parent.querySelector(child_sel).onchange = function ()
+        {
+            recalc(parent, kind);
+        }
+    else
+        parent.querySelector(child_sel).onclick = function ()
+        {
+            recalc(parent, kind);
+        }
 }
 
 function set_highlight(point, field, kind)
 {
     let in0 = point.querySelector('div.in0');
     let in1 = point.querySelector('div.in1');
-    if (in0 == field)
-    {
-        // recheck the checkbox
-        active_field(field, 'in0')
-    }
-    else if (in1 == field)
+    if (field.isSameNode(in1))
     {
         passive_field(in0); passive_field(in1);
         active_field(in0, 'in1');
         active_field(in1, 'in0');
     }
-    else
+    else if (! field.isSameNode(in0))
     {
         passive_field(in1);
         passive_field(in0);
@@ -74,14 +75,15 @@ function set_highlight(point, field, kind)
     }
 }
 
-function is_checked(field)
+function is_active(field)
 {
-    return field.querySelector('input[type=checkbox]').checked;
+    return field.classList.contains('in0')
+        || field.classList.contains('in1');
 }
 
 function get_field(point, which, scale)
 {
-    if (point.querySelector('div.' + which + ' input[type=checkbox]').checked)
+    if (is_active(point.querySelector('div.' + which)))
         return point.querySelector('div.' + which + ' input[type=text]').value * scale;
     return null;
 }
@@ -101,9 +103,9 @@ function recalc_all()
 function recalc(field, kind)
 {
     let point = field.parentElement;
-    if (kind == 'cb')
+    if (kind == 'activate')
         set_highlight(point, field, kind);
-    if (kind == 'cb' || is_checked(field))
+    if (kind == 'activate' || is_active(field))
         recalc_point(point);
 }
 
@@ -116,9 +118,7 @@ function recalc_point(point)
     let x1 = get_field(point, 'x1', scale);
     let t1 = get_field(point, 't1', 1);
     let lt = new LT(v, 1);
-    console.log([x0, t0, x1, t1]);
     let out = lt.trans([x0, t0, x1, t1]);
-    console.log(out);
     set_field(point, 'x0', out[0]/scale);
     set_field(point, 't0', out[1]);
     set_field(point, 'x1', out[2]/scale);
@@ -128,15 +128,12 @@ function recalc_point(point)
 function active_field(field, cl)
 {
     field.classList.add(cl);
-    field.querySelector('input[type=checkbox]').checked = true;
 }
 
 function passive_field(field)
 {
     field.classList.remove('in0');
     field.classList.remove('in1');
-    field.querySelector('input[type=checkbox]').checked = false;
-
 }
 
 function set_note(parent, msg)
