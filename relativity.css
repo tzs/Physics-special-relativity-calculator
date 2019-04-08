@@ -7,7 +7,7 @@ div.in0 input[type=text] {
 div.in1 input[type=text] {
     border: 2px dashed green;
     font-weight: bold;
-    background-color: rgba(100,255,100,.1);
+    background-color: rgba(100,255,100,.3);
 }
 
 div.point span.mark::after {

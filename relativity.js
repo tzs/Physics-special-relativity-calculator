@@ -128,12 +128,14 @@ function recalc_point(point)
 function active_field(field, cl)
 {
     field.classList.add(cl);
+    field.querySelector('input ').disabled = false;
 }
 
 function passive_field(field)
 {
     field.classList.remove('in0');
     field.classList.remove('in1');
+    field.querySelector('input ').disabled = true;
 }
 
 function set_note(parent, msg)
