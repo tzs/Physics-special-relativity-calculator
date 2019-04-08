@@ -5,6 +5,12 @@ This is a simple converter that converts between two frames in special
 relativity. It consists of several individual coverters. Each converter
 handles one point.
 
+To run: either grab the HTML, CSS, and JavaScript files, put them in
+a local director, and open index.html in a browser, or you can run
+this directly from GitHub at:
+
+    https://tzs.github.io/Physics-special-relativity-calculator/
+
 In each converter, you give any two of: x, t, x', t', where x and t are
 position and time of an event in frame 1, and x' and t' are position and
 time of the same event in frame 2.
